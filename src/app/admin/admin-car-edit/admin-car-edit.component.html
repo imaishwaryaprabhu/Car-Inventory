@@ -1,0 +1,153 @@
+<div class="row">
+    <div class="col-md-6">
+        <form [formGroup]="carForm" (ngSubmit)="onAddEditCar()" #form="ngForm">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" name="name" id="name" class="form-control" formControlName="name">
+                <div class="error" *ngIf="form.submitted && getFormControl('name').invalid">
+                    <span class="pr-2">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-exclamation-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                        </svg>
+                    </span>
+                    <span *ngIf="getFormControl('name').errors.required">*Required</span>
+                    <span *ngIf="getFormControl('name').errors.pattern">Only alphabets allowed!</span>
+                    <span *ngIf="getFormControl('name').errors.minlength">Name has to be of atleast {{ getFormControl('name').errors.minlength.requiredLength }} characters!</span> 
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="modal">Modal</label>
+                <select name="modal" id="modal" class="custom-select" formControlName="modal" *ngIf="editMode else addMode">  
+                    <option value=""></option>
+                    <option *ngFor="let modal of modalCategories" [value]="modal">{{ modal.name }}</option>
+                </select>
+                <ng-template #addMode>
+                    <select name="modal" id="modal" class="custom-select" formControlName="modal">  
+                        <option value=""></option>
+                        <option *ngFor="let modal of modalCategories" [ngValue]="modal">{{ modal.name }}</option>
+                    </select>
+                </ng-template>
+                <div class="error" *ngIf="form.submitted && getFormControl('modal').invalid">
+                    <span class="pr-2">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-exclamation-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                        </svg>
+                    </span>
+                    <span *ngIf="getFormControl('modal').errors.required">*Required</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="make">Make</label>
+                <input type="text" name="make" id="make" class="form-control" formControlName="make">
+                <div class="error" *ngIf="form.submitted && getFormControl('make').invalid">
+                    <span class="pr-2">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-exclamation-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                        </svg>
+                    </span>
+                    <span *ngIf="getFormControl('make').errors.required">*Required</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="price">Price</label>
+                <div class="input-group col-4 mb-2 px-0">
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">₹</div>
+                    </div>
+                    <input type="number" class="form-control" id="price" name="price" formControlName="price">
+                </div>
+                <div class="error" *ngIf="form.submitted && getFormControl('price').invalid">
+                    <span class="pr-2">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-exclamation-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                        </svg>
+                    </span>
+                    <span *ngIf="getFormControl('price').errors.required">*Required</span>
+                    <span *ngIf="getFormControl('price').errors.min">Price cannot be less than {{ getFormControl('price').errors.min.min }}!</span>
+                    <span *ngIf="getFormControl('price').errors.max">Price cannot be more than {{ getFormControl('price').errors.max.max }}!</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="launchDate">Launch Date</label>
+                <div class="input-group mb-2 px-0">
+                    <input class="form-control" placeholder="yyyy-mm-dd"
+                           name="dp" [(ngModel)]="model" ngbDatepicker #d="ngbDatepicker" formControlName="launchDate">
+                    <div class="input-group-append">
+                        <button class="btn btn-sm btn-outline-secondary input-group-text" (click)="d.toggle()" type="button">
+                            <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-calendar-date" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                                <path d="M6.445 11.688V6.354h-.633A12.6 12.6 0 0 0 4.5 7.16v.695c.375-.257.969-.62 1.258-.777h.012v4.61h.675zm1.188-1.305c.047.64.594 1.406 1.703 1.406 1.258 0 2-1.066 2-2.871 0-1.934-.781-2.668-1.953-2.668-.926 0-1.797.672-1.797 1.809 0 1.16.824 1.77 1.676 1.77.746 0 1.23-.376 1.383-.79h.027c-.004 1.316-.461 2.164-1.305 2.164-.664 0-1.008-.45-1.05-.82h-.684zm2.953-2.317c0 .696-.559 1.18-1.184 1.18-.601 0-1.144-.383-1.144-1.2 0-.823.582-1.21 1.168-1.21.633 0 1.16.398 1.16 1.23z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="error" *ngIf="form.submitted && getFormControl('launchDate').invalid">
+                    <span class="pr-2">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-exclamation-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                        </svg>
+                    </span>
+                    <span *ngIf="getFormControl('launchDate').errors.required">*Required</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="imagePath">Image URL</label>
+                <input type="text" name="imagePath" id="imagePath" class="form-control" formControlName="imagePath">
+                <div class="error" *ngIf="form.submitted && getFormControl('imagePath').invalid">
+                    <span class="pr-2">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-exclamation-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                        </svg>
+                    </span>
+                    <span *ngIf="getFormControl('imagePath').errors.required">*Required</span>
+                    <span *ngIf="getFormControl('imagePath').errors.url">Enter valid url!</span>
+                </div>
+            </div>       
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea rows="3" name="description" id="description" class="form-control" formControlName="description"></textarea>
+                <div class="error" *ngIf="form.submitted && getFormControl('description').invalid">
+                    <span class="pr-2">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-exclamation-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                        </svg>
+                    </span>
+                    <span *ngIf="getFormControl('description').errors.required">*Required</span>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success">{{ editMode ? 'Save' : 'Add'}}</button>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <div class="card w-75">
+            <img [src]="form.value.imagePath" class="card-img">
+            <div class="card-body">
+                <h4 class="card-title">{{ form.value.make }} {{ form.value.name }}</h4>
+                <p><i>{{ form.value.description }}</i></p>
+                <table class="table">
+                    <tbody>
+                      <tr *ngIf="form.value.modal">
+                        <th scope="row">Model</th>
+                        <td>{{ form.value.modal.name }}</td>
+                      </tr>
+                      <tr *ngIf="form.value.price">
+                        <th scope="row">Price</th>
+                        <td>{{ form.value.price | currency }}</td>
+                      </tr>
+                      <tr *ngIf="form.value.launchDate">
+                        <th scope="row">Launch Date</th>
+                        <td>{{ form.value.launchDate | json }}</td>
+                      </tr>
+                    </tbody>
+                </table>
+            </div>
+          </div>
+    </div>
+</div>

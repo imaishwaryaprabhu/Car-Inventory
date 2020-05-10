@@ -1,0 +1,23 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" routerLink="/cars">Car Inventory</a>
+    <div class="collapse navbar-collapse">
+        <ul class="navbar-nav ml-md-auto">
+            <li class="nav-item">
+                <a class="nav-link" routerLinkActive="active" routerLink="/login">Sign In</a>
+            </li>
+            <li class="nav-item dropdown" ngbDropdown>
+                <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" 
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                routerLinkActive="active"
+                ngbDropdownToggle>
+                  Username
+                </a>
+                <div class="dropdown-menu dropdown-menu-md-right" aria-labelledby="navbarDropdownMenuLink" ngbDropdownMenu>
+                    <a class="dropdown-item" ngbDropdownItem routerLink="admin/models">Manage Models</a>
+                    <a class="dropdown-item" ngbDropdownItem routerLink="admin/cars">Manage Cars</a>
+                    <a class="dropdown-item" ngbDropdownItem>Logout</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>
