@@ -53,7 +53,7 @@ router.get('/', async (req, res) => {
     }
 
     try {
-        const modals = await query.sort({ _id: -1 });
+        const modals = await query.sort({ _id: -1 }).select({ deleted: 0 });
         const count = await Modal.countDocuments({ deleted: false });
 
         res.status(200).send({

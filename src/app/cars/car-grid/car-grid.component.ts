@@ -12,7 +12,11 @@ import { CarService } from 'src/app/services/car.service';
 })
 export class CarGridComponent implements OnInit {
   cars: Car[];
-  filteredCars: Car[];
+  selectedModal: string;
+  page = 1;
+  pageSize = 3;
+  collectionSize: number;
+  showLoadMore = false;
 
   constructor(
     private carModalService: NgbModal, 
@@ -21,15 +25,28 @@ export class CarGridComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.cars = this.carService.getCars();
     this.route.queryParams.subscribe((queryParams: Params) => {
-      let modal = queryParams['modal'];
-      this.filteredCars = (modal) ? this.cars.filter(c => c.modal.name === modal) : this.cars;
+      this.selectedModal = (queryParams['modal']) ? queryParams['modal'] : "";
+      this.page = 1;
+      this.carService.getCars(this.pageSize, this.page, this.selectedModal).subscribe((carData: any) => {
+        this.cars = carData.cars;
+        this.collectionSize = carData.totalCount;
+        this.showLoadMore = (this.collectionSize - this.cars.length) > 0;
+      });
     });
   }
 
   open(car: Car) {
     const carModalRef = this.carModalService.open(CarDetailCardComponent);
-    carModalRef.componentInstance.car = car;
+    carModalRef.componentInstance.carId = car._id;
+  }
+
+  onLoadMore() {
+    this.carService.getCars(this.pageSize, this.page + 1, this.selectedModal).subscribe((carData) => {
+      this.cars = [...this.cars, ...carData.cars];
+      this.collectionSize = carData.totalCount;
+      this.page++;
+      this.showLoadMore = (this.collectionSize - this.cars.length) > 0;
+    });
   }
 }

@@ -1,74 +1,72 @@
 import { Injectable } from '@angular/core';
 import { Car } from '../modals/car.modal';
 import { Modal } from '../modals/modal.modal';
+import { HttpClient } from '@angular/common/http';
+import { map, tap, take } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class CarService {
 
-  private cars: Car[] = [
-    new Car(
-      "1", 
-      "Civic LX", 
-      "Honda",
-      new Modal("1", "Sedan"), 
-      10998, 
-      new Date(2010, 9, 18), 
-      "https://img2.carmax.com/img/vehicles/19338242/1.jpg",
-      "This is just a testing description"
-    ),
-    new Car(
-      "2",
-      "Fusion",
-      "Ford",
-      new Modal("3", "Wagon"),
-      9998,
-      new Date(2009, 4, 12),
-      "https://img2.carmax.com/img/vehicles/19337963/1.jpg",
-      "This is just a testing description"
-    ),
-    new Car(
-      "3",
-      "Venza",
-      "Toyota",
-      new Modal("2", "SUV"),
-      12000,
-      new Date(2010, 10, 15),
-      "https://img2.carmax.com/img/vehicles/18905745/1/400.jpg",
-      "The most comprehensive Angular 4 (Angular 2+) course. Build a real e-commerce app with Angular, Firebase and Bootstrap 4"
-    ),
-    new Car(
-      "4",
-      "Juke S",
-      "Nissan",
-      new Modal("2", "SUV"),
-      1510,
-      new Date(18, 12, 20),
-      "https://img2.carmax.com/img/vehicles/19337638/1/400.jpg",
-      "The most comprehensive Angular 4 (Angular 2+) course. Build a real e-commerce app with Angular, Firebase and Bootstrap 4"
+  private cars: Car[] = [];
+
+  constructor(private http: HttpClient, private router: Router) { }
+
+  getCars(pageSize: number, page: number, modalName: string = "") {
+    const queryParams = `?pagesize=${pageSize}&pageno=${page}&modal=${modalName}`;
+    return this.http.get<{ message: string, cars: Car[], totalCount: number }>(
+      `http://localhost:5000/api/cars${queryParams}`
     )
-  ]
+    .pipe(
+      tap(response => {
+        this.cars = response.cars;
+        return response;
+      })      
+    ); 
+  }
 
-  constructor() { }
-
-  getCars() {
-    return this.cars.slice();
+  getCarsByModal(modalName: string) {
+    const queryParams = `?modal=${modalName}`;
+    return this.http.get<{ message: string, cars: Car[], totalCount: number }>(
+      `http://localhost:5000/api/cars${queryParams}`
+    )
+    .pipe(
+      map(response => {
+        return response.cars;
+      })      
+    ); 
   }
 
   addCar(newCar: Car) {
-    const id = this.cars.length + 1;
-    newCar._id = id.toString();
-    console.log(typeof newCar);
-    this.cars.push(newCar);
-    console.log(this.cars)
+    let params = { 
+      ...newCar,
+      modalId: newCar.modal._id,
+      launchDate: Date.parse((new Date(newCar.launchDate.year, newCar.launchDate.month - 1, newCar.launchDate.day)).toISOString())
+    };
+    delete params.modal;
+    this.http.post<{ message: string, car: Car }>(
+      'http://localhost:5000/api/cars',
+      { ...params }
+    ).subscribe(response => {
+      this.router.navigate(['/admin/cars']);
+    });
   }
 
   updateCar(carId: string, car: Car) {
-    const index = this.cars.findIndex(ele => {
-      return ele._id === carId;
+    let params = { 
+      ...car,
+      modalId: car.modal._id,
+      launchDate: Date.parse((new Date(car.launchDate.year, car.launchDate.month - 1, car.launchDate.day)).toISOString())
+    };
+    delete params.modal;
+    this.http.put<{ message: string, car: Car }>(
+      `http://localhost:5000/api/cars/${carId}`,
+      { ...params }
+    ).subscribe(response => {
+      this.router.navigate(['/admin/cars']);
     });
-    this.cars[index] = car;
   }
 
   deleteCar(index: number) {
@@ -76,8 +74,16 @@ export class CarService {
   }
 
   getCar(id: string) {
-    return this.cars.find((car) => {
-      return car._id === id;
-    });
+    return this.http.get<{ message: string, car: any }>(
+      `http://localhost:5000/api/cars/${id}`
+    ).pipe(
+      take(1), 
+      map(response => {
+        response.car.launchDate = new Date(response.car.launchDate);
+        let launchDate = { "year": response.car.launchDate.getFullYear(), "month": response.car.launchDate.getMonth() + 1, "day": response.car.launchDate.getDate()}
+        response.car.launchDate = launchDate;
+        return response.car;
+      })
+    );
   }
 }

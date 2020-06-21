@@ -55,6 +55,7 @@ router.put('/:id', async (req, res) => {
 
 router.get('/', async (req, res) => {
     let query = Car.find();
+    let countQuery = Car.countDocuments();
     const pageSize = +req.query.pagesize;
     const currentPage = +req.query.pageno;
     const modalName = req.query.modal;
@@ -64,11 +65,9 @@ router.get('/', async (req, res) => {
         if (!modal) return res.status(400).send({ message: 'Modal name does not exist.' });
         
         query = Car.find({ modal: modal._id });
+        countQuery = Car.countDocuments({ modal: modal._id });
     }
-    query.populate({ 
-        path: 'modal',
-        select: 'name'
-    });
+    query.select({ name: 1, modal: 1, price: 1, imagePath: 1 }).populate({ path: 'modal', select: 'name' });
 
     if (pageSize && currentPage) {
         query.skip(pageSize * (currentPage - 1)).limit(pageSize);
@@ -76,7 +75,7 @@ router.get('/', async (req, res) => {
 
     try {
         const cars = await query.sort({ name: 1 });
-        const count = await Car.countDocuments();
+        const count = await countQuery;
 
         res.status(200).send({
             message: "Success",
@@ -89,7 +88,7 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
-    const car = await Car.findOne(req.body.carId);
+    const car = await Car.findById(req.params.id).populate({ path: 'modal', select: 'name' });
     if (!car) return res.status(404).send({ message: "Car with the given ID not found." });
 
     res.send({

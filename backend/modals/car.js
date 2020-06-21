@@ -23,7 +23,7 @@ const carSchema = new mongoose.Schema({
     price: {
         type: Number,
         min: 1,
-        max: 10000,
+        max: 100000,
         required: true
     },
     launchDate: {
@@ -54,7 +54,7 @@ function validateCar(car) {
         name: Joi.string().min(3).max(50).required(),
         make: Joi.string().min(3).max(50).required(),
         modalId: Joi.objectId().required(),
-        price: Joi.number().min(1).max(10000).required(),
+        price: Joi.number().min(1).max(100000).required(),
         launchDate: Joi.date().timestamp(),
         imagePath: Joi.string().pattern(new RegExp(/[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/i)),
         description: Joi.string().min(10).max(1024).required()

@@ -1,4 +1,5 @@
 import { Modal } from './modal.modal';
+import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 export class Car {
     constructor(
@@ -7,7 +8,7 @@ export class Car {
         public make: string,
         public modal: Modal, 
         public price: number, 
-        public launchDate: Date,
+        public launchDate: NgbDateStruct,
         public imagePath: string,
         public description: string) {}
 }

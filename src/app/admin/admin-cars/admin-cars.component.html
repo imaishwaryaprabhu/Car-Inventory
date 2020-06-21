@@ -19,7 +19,7 @@
             </thead>
             <tbody>
             <!-- <tr *ngFor="let country of countries$ | async; index as i"> -->
-            <tr *ngFor="let car of filteredCars; index as i">
+            <tr *ngFor="let car of cars; index as i">
                 <th scope="row">{{ i + 1 }}</th>
                 <td>
                     <img [src]="car.imagePath" class="mr-2" style="width: 50px">

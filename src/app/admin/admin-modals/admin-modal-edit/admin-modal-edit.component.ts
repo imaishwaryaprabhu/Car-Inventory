@@ -30,9 +30,11 @@ export class AdminModalEditComponent implements OnInit {
       return false;
 
     if (this.editMode) 
-      this.modalService.updateModal(this.editModal._id, this.modalForm.value.name);
+      this.modalService.updateModal(this.editModal._id, this.modalForm.value.name)
+        .subscribe(data => this.modalService.modalCompletedEditing.next());
     else 
-      this.modalService.addModal(this.modalForm.value.name);
+      this.modalService.addModal(this.modalForm.value.name)
+        .subscribe(data => this.modalService.modalCompletedEditing.next());
 
     this.modalForm.reset();
   }

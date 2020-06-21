@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import {NgbDateStruct, NgbCalendar} from '@ng-bootstrap/ng-bootstrap';
+import {NgbDateStruct, NgbCalendar, NgbDate} from '@ng-bootstrap/ng-bootstrap';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ModalService } from 'src/app/services/modal.service';
 import { Modal } from 'src/app/modals/modal.modal';
 import { CarService } from 'src/app/services/car.service';
-import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Car } from 'src/app/modals/car.modal';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'admin-car-edit',
@@ -14,22 +15,23 @@ import { Car } from 'src/app/modals/car.modal';
 })
 export class AdminCarEditComponent implements OnInit {
   model: NgbDateStruct;
-  date: {year: number, month: number};
+  maxDate: NgbDate = this.calendar.getToday();
+  minDate: NgbDate = this.calendar.getPrev(this.maxDate, "y", 20);
   carForm: FormGroup;
   editMode = false;
-  modalCategories: Modal[];
+  modalCategories$: Observable<Modal[]>;
   editId: string;
 
   constructor(
     private calendar: NgbCalendar, 
     private modalService: ModalService, 
     private carService: CarService,
-    private route: ActivatedRoute,
-    private router: Router
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-    this.modalCategories = this.modalService.getModals();
+    this.model = this.calendar.getToday();
+    this.modalCategories$ = this.modalService.getAllModals();
     this.editId = this.route.snapshot.paramMap.get('id');
     if (this.editId) 
       this.editMode = true;
@@ -38,7 +40,6 @@ export class AdminCarEditComponent implements OnInit {
 
   private initalizeForm() {
     this.carForm = new FormGroup({
-      '_id': new FormControl(""),
       'name': new FormControl("", [Validators.required, Validators.pattern(/[a-zA-Z ]*/), Validators.minLength(3), Validators.maxLength(10)]),
       'make': new FormControl("", [Validators.required]),
       'modal': new FormControl("", [Validators.required]),
@@ -49,8 +50,9 @@ export class AdminCarEditComponent implements OnInit {
     });
 
     if (this.editMode) {
-      const car = this.carService.getCar(this.editId);
-      this.carForm.patchValue(car);
+      this.carService.getCar(this.editId).subscribe((car: Car) => {
+        this.carForm.patchValue(car);
+      });
     }
   }
 
@@ -58,14 +60,11 @@ export class AdminCarEditComponent implements OnInit {
     if (this.carForm.invalid)
       return false;
 
-    const launchDate = this.carForm.value.launchDate;
-    this.carForm.value.launchDate = new Date(launchDate.year, launchDate.month, launchDate.day)
     if (this.editMode) {
       this.carService.updateCar(this.editId, this.carForm.value);
     } else {
       this.carService.addCar(this.carForm.value);
     }
-    this.router.navigate(['/admin/cars']);
   }
 
   getFormControl(formControlName: string) {

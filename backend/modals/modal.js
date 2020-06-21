@@ -22,7 +22,7 @@ function validateModal(modal) {
     let errors = [];
 
     const schema = Joi.object({
-        name: Joi.string().alphanum().min(3).max(50).required()
+        name: Joi.string().min(3).max(50).required()
     });
     const { error } = schema.validate(modal);
     if (error) {

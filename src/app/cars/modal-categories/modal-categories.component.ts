@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalService } from 'src/app/services/modal.service';
 import { Modal } from 'src/app/modals/modal.modal';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'modal-categories',
@@ -8,12 +9,12 @@ import { Modal } from 'src/app/modals/modal.modal';
   styleUrls: ['./modal-categories.component.css']
 })
 export class ModalCategoriesComponent implements OnInit {
-  modalCategories: Modal[];
+  modalCategories$: Observable<Modal[]>;
 
   constructor(private modalService: ModalService) { }
 
   ngOnInit(): void {
-    this.modalCategories = this.modalService.getModals();
+    this.modalCategories$ = this.modalService.getAllModals();
   }
 
 }

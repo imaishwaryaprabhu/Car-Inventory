@@ -15,26 +15,24 @@ export class AdminModalsComponent implements OnInit, OnDestroy {
   collectionSize: number;
   modals: Modal[];
   filteredModals: Modal[];
-  subscription: Subscription;
+  postsSubscription: Subscription;
+  postChangeSubscription: Subscription;
 
   constructor(private modalService: ModalService) {}
 
   refreshList() {
-    this.filteredModals = this.modals
-      // .map((modal, i) => ({id: i + 1, ...modal}))
-      .slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize);
+    this.modalService.getModals(this.pageSize, this.page);
   }
 
   ngOnInit(): void {
-    this.subscription = this.modalService.modalListChanged.subscribe((modals: Modal[]) => {
-      this.modals = modals;
-      this.collectionSize = this.modals.length;
-      this.refreshList();
-    });
-
-    this.modals = this.modalService.getModals();
-    this.collectionSize = this.modals.length;
-    this.refreshList();
+    this.modalService.getModals(this.pageSize, this.page);
+    this.postsSubscription = this.modalService.modalListChanged
+      .subscribe((modalData: { modals: Modal[], totalCount: number }) => {
+        this.modals = modalData.modals;
+        this.collectionSize = modalData.totalCount;
+      });
+    this.postChangeSubscription = this.modalService.modalCompletedEditing
+      .subscribe(() => this.refreshList());
   }
 
   onEditModal(modal: Modal) {
@@ -42,11 +40,13 @@ export class AdminModalsComponent implements OnInit, OnDestroy {
   }
 
   onDeleteModal(id: string) {
-    this.modalService.deleteModal(id);
+    this.modalService.deleteModal(id)
+      .subscribe(data => this.refreshList());
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe();
+    this.postsSubscription.unsubscribe();
+    this.postChangeSubscription.unsubscribe();
   }
 
 }

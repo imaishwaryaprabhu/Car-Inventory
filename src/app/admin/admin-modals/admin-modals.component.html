@@ -10,10 +10,9 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let modal of filteredModals; let i=index">
+                <tr *ngFor="let modal of modals; let i=index">
                     <th scope="row">{{ i+1 }}</th>
                     <td>
-                        <!-- <img [src]="'https://upload.wikimedia.org/wikipedia/commons/' + country.flag" class="mr-2" style="width: 20px"> -->
                         {{ modal.name }}
                     </td>
                     <td>

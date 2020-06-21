@@ -13,11 +13,10 @@ import { Car } from 'src/app/modals/car.modal';
 })
 export class AdminCarsComponent implements OnInit {
   filter = new FormControl('');
-  countries$: Observable<void>;
   cars: Car[];
   filteredCars: Car[];
   page = 1;
-  pageSize = 4;
+  pageSize = 5;
   collectionSize: number;
   
   constructor(private router: Router, private route: ActivatedRoute, private carService: CarService) {
@@ -28,14 +27,13 @@ export class AdminCarsComponent implements OnInit {
   }
 
   refreshList() {
-    this.filteredCars = this.cars
-      // .map((car, i) => ({id: i + 1, ...car}))
-      .slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize);
+    this.carService.getCars(this.pageSize, this.page).subscribe((carData) => {
+      this.cars = carData.cars;
+      this.collectionSize = carData.totalCount;
+    });
   }
 
   ngOnInit(): void {
-    this.cars = this.carService.getCars();
-    this.collectionSize = this.cars.length;
     this.refreshList();
   }
 

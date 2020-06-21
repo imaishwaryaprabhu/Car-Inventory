@@ -3,7 +3,7 @@
   [routerLink]="['/cars']"
   [queryParams]="{modal: ''}"
   routerLinkActive="active">All Modals</a>
-  <a class="list-group-item list-group-item-action"  *ngFor="let modal of modalCategories"
+  <a class="list-group-item list-group-item-action"  *ngFor="let modal of modalCategories$ | async"
   [routerLink]="['/cars']"
   [queryParams]="{modal: modal.name}"
   routerLinkActive="active">{{ modal.name }}</a>

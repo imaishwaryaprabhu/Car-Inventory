@@ -5,7 +5,7 @@
   </button>
 </div> -->
 <div class="modal-body">
-  <div class="card">
+  <div class="card" *ngIf="car$ | async as car; else loading">
     <img [src]="car.imagePath" class="card-img-top" [alt]="car.name">
     <div class="card-body">
       <h5 class="card-title">{{car.make}} {{car.name}}</h5>
@@ -14,9 +14,12 @@
     <ul class="list-group list-group-flush">
       <li class="list-group-item">Price: {{car.price | currency}}</li>
       <li class="list-group-item">Modal: {{car.modal.name}}</li>
-      <li class="list-group-item">Launch Date: {{car.launchDate | date}}</li>
+      <li class="list-group-item">Year: {{car.launchDate.year}}</li>
     </ul>
   </div>
+  <ng-template #loading>
+    <p>Loading</p>
+  </ng-template>
 </div>
 <div class="modal-footer">
   <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
