@@ -4,6 +4,10 @@ import { Modal } from '../modals/modal.modal';
 import { HttpClient } from '@angular/common/http';
 import { map, tap, take } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { ToastService } from './toast.service';
+import { environment } from '../../environments/environment';
+
+const BACKEND_PATH = environment.backendURL + '/cars';
 
 @Injectable({
   providedIn: 'root'
@@ -12,12 +16,12 @@ export class CarService {
 
   private cars: Car[] = [];
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient, private router: Router, private toastService: ToastService) { }
 
   getCars(pageSize: number, page: number, modalName: string = "") {
     const queryParams = `?pagesize=${pageSize}&pageno=${page}&modal=${modalName}`;
     return this.http.get<{ message: string, cars: Car[], totalCount: number }>(
-      `http://localhost:5000/api/cars${queryParams}`
+      BACKEND_PATH + queryParams
     )
     .pipe(
       tap(response => {
@@ -30,7 +34,7 @@ export class CarService {
   getCarsByModal(modalName: string) {
     const queryParams = `?modal=${modalName}`;
     return this.http.get<{ message: string, cars: Car[], totalCount: number }>(
-      `http://localhost:5000/api/cars${queryParams}`
+      BACKEND_PATH + queryParams
     )
     .pipe(
       map(response => {
@@ -47,9 +51,10 @@ export class CarService {
     };
     delete params.modal;
     this.http.post<{ message: string, car: Car }>(
-      'http://localhost:5000/api/cars',
+      BACKEND_PATH,
       { ...params }
     ).subscribe(response => {
+      this.toastService.showSuccess("Car has been added");
       this.router.navigate(['/admin/cars']);
     });
   }
@@ -62,20 +67,23 @@ export class CarService {
     };
     delete params.modal;
     this.http.put<{ message: string, car: Car }>(
-      `http://localhost:5000/api/cars/${carId}`,
+      `${BACKEND_PATH}/${carId}`,
       { ...params }
     ).subscribe(response => {
+      this.toastService.showSuccess("Car has been updated");
       this.router.navigate(['/admin/cars']);
     });
   }
 
-  deleteCar(index: number) {
-    this.cars.splice(index, 1);
+  deleteCar(id: string) {
+    return this.http.delete<{ message: string, car: any }>(
+      `${BACKEND_PATH}/${id}`
+    );
   }
 
   getCar(id: string) {
     return this.http.get<{ message: string, car: any }>(
-      `http://localhost:5000/api/cars/${id}`
+      `${BACKEND_PATH}/${id}`
     ).pipe(
       take(1), 
       map(response => {

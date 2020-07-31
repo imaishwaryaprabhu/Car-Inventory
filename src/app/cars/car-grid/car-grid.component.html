@@ -15,6 +15,7 @@
     </ng-container>
 </div>
 <div class="row justify-content-md-center">
+    <h3 *ngIf="!cars.length">No cars found!!</h3>
     <button type="button" class="btn btn-outline-primary" (click)="onLoadMore()"
     *ngIf="showLoadMore">Load more</button>
 </div>

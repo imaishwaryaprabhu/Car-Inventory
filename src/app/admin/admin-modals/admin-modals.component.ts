@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Modal } from 'src/app/modals/modal.modal';
 import { ModalService } from 'src/app/services/modal.service';
 import { Subscription } from 'rxjs';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   selector: 'admin-modals',
@@ -18,7 +19,7 @@ export class AdminModalsComponent implements OnInit, OnDestroy {
   postsSubscription: Subscription;
   postChangeSubscription: Subscription;
 
-  constructor(private modalService: ModalService) {}
+  constructor(private modalService: ModalService, private toastService: ToastService) {}
 
   refreshList() {
     this.modalService.getModals(this.pageSize, this.page);
@@ -41,7 +42,10 @@ export class AdminModalsComponent implements OnInit, OnDestroy {
 
   onDeleteModal(id: string) {
     this.modalService.deleteModal(id)
-      .subscribe(data => this.refreshList());
+      .subscribe(data => {
+        this.toastService.showSuccess("Modal has been deleted");
+        this.refreshList();
+      });
   }
 
   ngOnDestroy() {

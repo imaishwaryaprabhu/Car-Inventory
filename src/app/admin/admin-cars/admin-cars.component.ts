@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
 import { Router, ActivatedRoute } from '@angular/router';
 import { CarService } from 'src/app/services/car.service';
 import { Car } from 'src/app/modals/car.modal';
+import { ToastService } from 'src/app/services/toast.service';
 
 @Component({
   selector: 'admin-cars',
@@ -19,12 +18,11 @@ export class AdminCarsComponent implements OnInit {
   pageSize = 5;
   collectionSize: number;
   
-  constructor(private router: Router, private route: ActivatedRoute, private carService: CarService) {
-    // this.countries$ = this.filter.valueChanges.pipe(
-    //   startWith(''),
-    //   map(text => console.log(text))
-    // );
-  }
+  constructor(
+    private router: Router, 
+    private route: ActivatedRoute, 
+    private carService: CarService,
+    private toastService: ToastService) {}
 
   refreshList() {
     this.carService.getCars(this.pageSize, this.page).subscribe((carData) => {
@@ -43,5 +41,12 @@ export class AdminCarsComponent implements OnInit {
 
   onEditCar(id: string) {
     this.router.navigate([id, 'edit'], { relativeTo: this.route });
+  }
+
+  onDeleteCar(id: string) {
+    this.carService.deleteCar(id).subscribe(data => {
+      this.toastService.showSuccess("Car has been deleted");
+      this.refreshList();
+    })
   }
 }

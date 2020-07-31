@@ -28,6 +28,10 @@
                         </button>
                     </td>
                 </tr>
+                <tr *ngIf="!modals.length">
+                    <th scope="row"></th>
+                    <td>No record found</td>
+                </tr>
             </tbody>
         </table>
           

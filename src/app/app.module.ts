@@ -17,6 +17,8 @@ import { AdminModalEditComponent } from './admin/admin-modals/admin-modal-edit/a
 import { AdminCarsComponent } from './admin/admin-cars/admin-cars.component';
 import { AdminCarEditComponent } from './admin/admin-car-edit/admin-car-edit.component';
 import { AuthInterceptor } from './services/auth-interceptor';
+import { ErrorInterceptor } from './services/error-interceptor';
+import { ToastAlertComponent } from './shared/toast-alert/toast-alert.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,8 @@ import { AuthInterceptor } from './services/auth-interceptor';
     AdminModalsComponent,
     AdminModalEditComponent,
     AdminCarsComponent,
-    AdminCarEditComponent
+    AdminCarEditComponent,
+    ToastAlertComponent
   ],
   imports: [
     BrowserModule,
@@ -43,6 +46,10 @@ import { AuthInterceptor } from './services/auth-interceptor';
   providers: [{
     provide: HTTP_INTERCEPTORS,
     useClass: AuthInterceptor,
+    multi: true
+  }, {
+    provide: HTTP_INTERCEPTORS,
+    useClass: ErrorInterceptor,
     multi: true
   }],
   bootstrap: [AppComponent]
