@@ -1,15 +1,36 @@
 <div class="row">
     <div class="col-md-6 offset-3">
-        <form>
+        <form #loginForm="ngForm" (ngSubmit)="onLogin(loginForm)">
             <div class="form-group">
                 <label for="email">Email address</label>
-                <input type="email" id="email" class="form-control">
+                <input type="email" id="email" class="form-control" 
+                ngModel name="email" #email="ngModel" email required>
+                <div class="error" *ngIf="email.invalid && email.touched">
+                    <span class="pr-2">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-exclamation-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                        </svg>
+                    </span>
+                    <span *ngIf="email.errors.required">*Required</span>
+                    <span *ngIf="email.errors.email">Please enter valid email!</span>
+                </div>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" class="form-control">
+                <input type="password" id="password" class="form-control" 
+                ngModel name="password" #password="ngModel" required>
+                <div class="error" *ngIf="password.invalid && password.touched">
+                    <span class="pr-2">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-exclamation-circle" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                            <path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/>
+                        </svg>
+                    </span>
+                    <span *ngIf="password.errors.required">*Required</span>
+                </div>
             </div>
-            <button type="submit" class="btn btn-success btn-block">Login</button>
+            <button type="submit" class="btn btn-success btn-block" [disabled]="loginForm.invalid">Login</button>
         </form>
     </div>
 </div>

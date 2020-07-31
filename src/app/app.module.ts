@@ -2,7 +2,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -16,6 +16,7 @@ import { AdminModalsComponent } from './admin/admin-modals/admin-modals.componen
 import { AdminModalEditComponent } from './admin/admin-modals/admin-modal-edit/admin-modal-edit.component';
 import { AdminCarsComponent } from './admin/admin-cars/admin-cars.component';
 import { AdminCarEditComponent } from './admin/admin-car-edit/admin-car-edit.component';
+import { AuthInterceptor } from './services/auth-interceptor';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,11 @@ import { AdminCarEditComponent } from './admin/admin-car-edit/admin-car-edit.com
     HttpClientModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [{
+    provide: HTTP_INTERCEPTORS,
+    useClass: AuthInterceptor,
+    multi: true
+  }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -7,6 +7,7 @@ import { CarDetailCardComponent } from './cars/car-detail-card/car-detail-card.c
 import { AdminModalsComponent } from './admin/admin-modals/admin-modals.component';
 import { AdminCarsComponent } from './admin/admin-cars/admin-cars.component';
 import { AdminCarEditComponent } from './admin/admin-car-edit/admin-car-edit.component';
+import { AuthGuardService } from './services/auth-guard.service';
 
 const routes: Routes = [
     { path: '', redirectTo: '/cars', pathMatch: 'full' },
@@ -15,10 +16,10 @@ const routes: Routes = [
         { path: '', component: CarGridComponent },
         { path: ':id', component: CarDetailCardComponent }
     ]},
-    { path: 'admin/models', component: AdminModalsComponent },
-    { path: 'admin/cars/new', component: AdminCarEditComponent },
-    { path: 'admin/cars/:id/edit', component: AdminCarEditComponent },
-    { path: 'admin/cars', component: AdminCarsComponent}
+    { path: 'admin/models', canActivate: [AuthGuardService],  component: AdminModalsComponent },
+    { path: 'admin/cars/new', canActivate: [AuthGuardService], component: AdminCarEditComponent },
+    { path: 'admin/cars/:id/edit', canActivate: [AuthGuardService], component: AdminCarEditComponent },
+    { path: 'admin/cars', canActivate: [AuthGuardService], component: AdminCarsComponent},
 ];
 
 @NgModule({
